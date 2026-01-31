@@ -58,16 +58,6 @@ echo "Order #1234" | ./mcprint
 ./mcprint --host 192.168.1.50 --port 9100 "Hello"
 ```
 
-### Calibrate
-
-If you're not sure what `PRINTER_WIDTH` to use, print a calibration page:
-
-```bash
-./mcprint calibrate
-```
-
-The last fully visible dashed line tells you the correct width in dots.
-
 ## Argument Resolution
 
 Arguments are resolved left to right:
