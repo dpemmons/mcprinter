@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/joho/godotenv"
@@ -112,6 +113,13 @@ func loadConfig() (string, string, error) {
 	if host == "" {
 		return "", "", fmt.Errorf("no printer host configured; set PRINTER_HOST in .env or use --host")
 	}
+
+	if w := os.Getenv("PRINTER_WIDTH"); w != "" {
+		if n, err := strconv.Atoi(w); err == nil && n > 0 {
+			escpos.PrinterWidth = n
+		}
+	}
+
 	return host, port, nil
 }
 

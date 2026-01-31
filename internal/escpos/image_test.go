@@ -38,6 +38,41 @@ func TestEncodeImage_ResizesToPrinterWidth(t *testing.T) {
 	}
 }
 
+func TestEncodeImage_DitheringProducesMixedPixels(t *testing.T) {
+	// Create a 48x1 image with a smooth gray gradient
+	// With dithering, mid-gray should produce a mix of black and white pixels
+	// rather than all-black or all-white
+	img := image.NewRGBA(image.Rect(0, 0, 48, 1))
+	for x := 0; x < 48; x++ {
+		g := uint8(128) // mid-gray
+		img.Set(x, 0, color.RGBA{g, g, g, 255})
+	}
+
+	data := escpos.EncodeImage(img)
+
+	cmdIdx := bytes.Index(data, []byte{0x1D, 0x76, 0x30, 0x00})
+	if cmdIdx == -1 {
+		t.Fatal("missing raster command")
+	}
+	rasterStart := cmdIdx + 8
+	// 384 dots wide / 8 = 48 bytes per row, 1 row
+	// Count set bits -- dithered mid-gray should have roughly half set
+	setBits := 0
+	for i := rasterStart; i < len(data); i++ {
+		for bit := 0; bit < 8; bit++ {
+			if data[i]&(1<<uint(bit)) != 0 {
+				setBits++
+			}
+		}
+	}
+	totalBits := (len(data) - rasterStart) * 8
+	ratio := float64(setBits) / float64(totalBits)
+	// Mid-gray dithered should be roughly 30-70% black (not 0% or 100%)
+	if ratio < 0.1 || ratio > 0.9 {
+		t.Errorf("dithering produced %.0f%% black pixels for mid-gray, expected mixed", ratio*100)
+	}
+}
+
 func TestEncodeImage_WhitePixelsAreZeroBits(t *testing.T) {
 	// Create a small 8x1 white image
 	img := image.NewRGBA(image.Rect(0, 0, 8, 1))
