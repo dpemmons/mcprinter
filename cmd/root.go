@@ -92,11 +92,21 @@ func NewRootCmd() *cobra.Command {
 	return rootCmd
 }
 
-func loadConfig() (string, string, error) {
-	godotenv.Load(".env")
-	if home, err := os.UserHomeDir(); err == nil {
-		godotenv.Load(filepath.Join(home, ".env"))
+func configDir() string {
+	if xdg := os.Getenv("XDG_CONFIG_HOME"); xdg != "" {
+		return filepath.Join(xdg, "mcprint")
 	}
+	if home, err := os.UserHomeDir(); err == nil {
+		return filepath.Join(home, ".config", "mcprint")
+	}
+	return ""
+}
+
+func loadConfig() (string, string, error) {
+	if dir := configDir(); dir != "" {
+		godotenv.Load(filepath.Join(dir, "config.env"))
+	}
+	godotenv.Load(".env")
 
 	host := os.Getenv("PRINTER_HOST")
 	port := os.Getenv("PRINTER_PORT")
@@ -111,7 +121,7 @@ func loadConfig() (string, string, error) {
 		port = "9100"
 	}
 	if host == "" {
-		return "", "", fmt.Errorf("no printer host configured; set PRINTER_HOST in .env or use --host")
+		return "", "", fmt.Errorf("no printer host configured; set PRINTER_HOST in ~/.config/mcprint/config.env or use --host")
 	}
 
 	if w := os.Getenv("PRINTER_WIDTH"); w != "" {
