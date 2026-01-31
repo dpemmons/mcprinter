@@ -43,7 +43,7 @@ Flags `--host` and `--port` override `.env` values.
 echo "Order #1234" | ./mcprint
 
 # Print a text file
-./mcprint receipt.txt
+./mcprint soul.txt
 
 # Print an image (resized to full paper width, dithered to B&W)
 ./mcprint logo.png
