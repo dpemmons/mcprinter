@@ -80,7 +80,7 @@ func ResolveArgs(args []string) ([]PrintItem, error) {
 // NewRootCmd creates the root cobra command.
 func NewRootCmd() *cobra.Command {
 	rootCmd := &cobra.Command{
-		Use:   "mcprinter [flags] [text|file|image]...",
+		Use:   "mcprint [flags] [text|file|image]...",
 		Short: "Print to a WiFi ESC/POS receipt printer",
 		Long:  "Send text and images to a WiFi-connected ESC/POS thermal receipt printer.",
 		RunE:  runPrint,

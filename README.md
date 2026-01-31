@@ -1,4 +1,4 @@
-# mcprinter
+# McPrinter
 
 A command line utility for printing to WiFi-based ESC/POS receipt printers.
 
@@ -37,25 +37,25 @@ Flags `--host` and `--port` override `.env` values.
 
 ```bash
 # Print text
-./mcprinter "Hello, world!"
+./mcprint "Hello, world!"
 
 # Print from stdin
-echo "Order #1234" | ./mcprinter
+echo "Order #1234" | ./mcprint
 
 # Print a text file
-./mcprinter receipt.txt
+./mcprint receipt.txt
 
 # Print an image (resized to full paper width, dithered to B&W)
-./mcprinter logo.png
+./mcprint logo.png
 
 # Print image on top, text below
-./mcprinter logo.png "Thanks for your order!"
+./mcprint logo.png "Thanks for your order!"
 
 # Print image on top, text file below
-./mcprinter logo.png receipt.txt
+./mcprint logo.png receipt.txt
 
 # Override connection
-./mcprinter --host 192.168.1.50 --port 9100 "Hello"
+./mcprint --host 192.168.1.50 --port 9100 "Hello"
 ```
 
 ### Calibrate
@@ -63,7 +63,7 @@ echo "Order #1234" | ./mcprinter
 If you're not sure what `PRINTER_WIDTH` to use, print a calibration page:
 
 ```bash
-./mcprinter calibrate
+./mcprint calibrate
 ```
 
 The last fully visible dashed line tells you the correct width in dots.
