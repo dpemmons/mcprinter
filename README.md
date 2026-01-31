@@ -10,15 +10,17 @@ Sends text and images over TCP to thermal receipt printers. Supports smart argum
 make
 ```
 
-This builds the `mcprinter` binary in the project directory.
+This builds the `mcprint` binary in the project directory.
+
+To install to `~/.local/bin`:
+
+```bash
+make install
+```
 
 ## Configuration
 
-Copy `.env.example` to `.env` and set your printer's IP:
-
-```bash
-cp .env.example .env
-```
+`make install` copies `.env.example` to `~/.config/mcprint/config.env` on first run. Edit it with your printer's IP:
 
 ```
 PRINTER_HOST=192.168.1.100
@@ -31,7 +33,7 @@ PRINTER_PORT=9100
 PRINTER_WIDTH=576
 ```
 
-Flags `--host` and `--port` override `.env` values.
+A local `.env` in the working directory is also loaded and takes precedence. Flags `--host` and `--port` override both.
 
 ## Usage
 
@@ -52,7 +54,7 @@ echo "Order #1234" | ./mcprint
 ./mcprint logo.png "Thanks for your order!"
 
 # Print image on top, text file below
-./mcprint logo.png receipt.txt
+./mcprint logo.png soul.txt
 
 # Override connection
 ./mcprint --host 192.168.1.50 --port 9100 "Hello"
