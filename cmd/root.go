@@ -136,8 +136,13 @@ func loadConfig() (string, string, error) {
 func runPrint(c *cobra.Command, args []string) error {
 	var allItems []PrintItem
 
-	// Check stdin for piped data
-	if info, err := os.Stdin.Stat(); err == nil && info.Mode()&os.ModeCharDevice == 0 {
+	if len(args) > 0 {
+		resolved, err := ResolveArgs(args)
+		if err != nil {
+			return err
+		}
+		allItems = resolved
+	} else if info, err := os.Stdin.Stat(); err == nil && info.Mode()&os.ModeCharDevice == 0 {
 		data, err := io.ReadAll(os.Stdin)
 		if err != nil {
 			return fmt.Errorf("reading stdin: %w", err)
@@ -145,23 +150,6 @@ func runPrint(c *cobra.Command, args []string) error {
 		if len(data) > 0 {
 			allItems = append(allItems, PrintItem{Type: ItemText, Data: string(data)})
 		}
-	}
-
-	if len(args) > 0 {
-		resolved, err := ResolveArgs(args)
-		if err != nil {
-			return err
-		}
-		// Merge: images from resolved go first, then stdin text, then resolved text
-		var images, texts []PrintItem
-		for _, item := range resolved {
-			if item.Type == ItemImage {
-				images = append(images, item)
-			} else {
-				texts = append(texts, item)
-			}
-		}
-		allItems = append(images, append(allItems, texts...)...)
 	}
 
 	if len(allItems) == 0 {
